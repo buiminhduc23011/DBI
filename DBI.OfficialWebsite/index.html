@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBI - Data Bridge Industrial | Giải pháp Gateway miễn phí</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Cấu hình Tailwind CSS
+        tailwind.config = {
+            darkMode: 'class', // cho phép chế độ tối
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            '50': '#eff6ff',
+                            '100': '#dbeafe',
+                            '200': '#bfdbfe',
+                            '300': '#93c5fd',
+                            '400': '#60a5fa',
+                            '500': '#3b82f6',
+                            '600': '#2563eb',
+                            '700': '#1d4ed8',
+                            '800': '#1e40af',
+                            '900': '#1e3a8a',
+                            '950': '#172554',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* CSS tùy chỉnh cho hiệu ứng và giao diện */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3b82f6;
+            transition: width 0.3s;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #3b82f6;
+        }
+        .dark .nav-link.active, .dark .nav-link:hover {
+            color: #60a5fa;
+        }
+        .nav-link.active::after, .nav-link:hover::after {
+            width: 100%;
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.8s;
+        }
+        .section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans antialiased">
+
+    <!-- Header và Navigation -->
+    <header class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#home" class="text-2xl font-bold text-primary-600 dark:text-primary-400">DBI Project</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="nav-link active">Giới thiệu DBI</a>
+                <a href="#ecosystem" class="nav-link">Hệ sinh thái</a>
+                <a href="#downloads" class="nav-link">Tải về</a>
+                <a href="#about-me" class="nav-link">Về tác giả</a>
+                <a href="#contact" class="nav-link">Liên hệ</a>
+            </div>
+            <div class="flex items-center">
+                 <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </button>
+                <button id="mobile-menu-button" class="md:hidden ml-4 p-2 text-gray-600 dark:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800">
+            <a href="#home" class="block py-2 px-6 text-sm nav-link-mobile">Giới thiệu DBI</a>
+            <a href="#ecosystem" class="block py-2 px-6 text-sm nav-link-mobile">Hệ sinh thái</a>
+            <a href="#downloads" class="block py-2 px-6 text-sm nav-link-mobile">Tải về</a>
+            <a href="#about-me" class="block py-2 px-6 text-sm nav-link-mobile">Về tác giả</a>
+            <a href="#contact" class="block py-2 px-6 text-sm nav-link-mobile">Liên hệ</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-6 md:p-8">
+        
+        <!-- Section: Giới thiệu DBI -->
+        <section id="home" class="section active text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Data Bridge Industrial (DBI)</h1>
+            <h2 class="text-2xl md:text-3xl font-medium text-primary-600 dark:text-primary-400 mb-6">Cầu nối dữ liệu cho Công nghiệp 4.0</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 dark:text-gray-300 mb-8">
+                DBI là một dự án <span class="font-semibold text-primary-500">phi lợi nhuận</span> với sứ mệnh cung cấp các công cụ kết nối và thu thập dữ liệu công nghiệp một cách mạnh mẽ, linh hoạt và <span class="font-semibold">hoàn toàn miễn phí</span>. Mục tiêu của chúng tôi là phá vỡ rào cản chi phí, giúp mọi kỹ sư, nhà máy đều có thể tiếp cận công nghệ IIoT.
+            </p>
+            <a href="#ecosystem" class="inline-block bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors duration-300">
+                Khám phá hệ sinh thái
+            </a>
+        </section>
+
+        <!-- Section: Hệ sinh thái -->
+        <section id="ecosystem" class="section">
+            <h2 class="text-3xl font-bold text-center mb-2">Hệ sinh thái DBI</h2>
+            <p class="text-center text-gray-500 dark:text-gray-400 mb-10">Các thành phần chính được phát triển để tạo nên một giải pháp toàn diện.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1: DBI Gateway -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                             <svg class="w-12 h-12 text-primary-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75" /></svg>
+                            <h3 class="text-xl font-semibold">DBI Gateway</h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">Trái tim của hệ thống, đóng vai trò như <span class="font-semibold">Kepware nhưng miễn phí</span>. Thu thập dữ liệu từ PLC, Cảm biến, thiết bị IoT qua nhiều giao thức và cung cấp qua OPC UA, MQTT.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="tech-tag">Modbus TCP/RTU</span>
+                            <span class="tech-tag">Siemens S7</span>
+                            <span class="tech-tag">OPC UA</span>
+                            <span class="tech-tag">MQTT</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2: DBI Hardware -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                             <svg class="w-12 h-12 text-primary-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V8.25a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 8.25v7.5A2.25 2.25 0 0 0 6.75 18Z" /></svg>
+                            <h3 class="text-xl font-semibold">DBI Hardware</h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">Các thiết bị phần cứng IoT (DIY) được thiết kế để dễ dàng tích hợp, thu thập tín hiệu từ các cảm biến analog/digital và truyền dữ liệu không dây về Gateway.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="tech-tag">ESP32</span>
+                            <span class="tech-tag">Raspberry Pi</span>
+                            <span class="tech-tag">WiFi/LoRa</span>
+                            <span class="tech-tag">Open-Source</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 3: DBI Tools -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                             <svg class="w-12 h-12 text-primary-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.43.992a6.759 6.759 0 0 1 0 1.25c.008.379.137.752.43.992l1.003.827c.424.35.534.955.26 1.431l-1.298 2.247a1.125 1.125 0 0 1-1.369.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.333.183-.582.495-.644.869l-.213 1.28c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 0 1-1.37-.49l-1.296-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.759 6.759 0 0 1 0-1.25c-.007-.379-.137-.752-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.431l1.297-2.247a1.125 1.125 0 0 1 1.37-.49l1.217.456c.355.133.75.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.213-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                            <h3 class="text-xl font-semibold">DBI Tools</h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">Bộ sưu tập các công cụ phần mềm nhỏ gọn, hữu ích cho kỹ sư tự động hóa: tool test Modbus, OPC UA client, logger dữ liệu, và nhiều hơn nữa.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="tech-tag">C#/.NET</span>
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Desktop App</span>
+                            <span class="tech-tag">Utilities</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Tải về -->
+        <section id="downloads" class="section">
+            <h2 class="text-3xl font-bold text-center mb-8">Tải về & Bắt đầu</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-primary-500 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        <div>
+                            <h3 class="font-semibold">DBI Gateway (v1.0.0)</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Phiên bản ổn định đầu tiên. Hỗ trợ Modbus TCP và OPC UA Server.</p>
+                        </div>
+                    </div>
+                    <a href="#" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">Tải xuống</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-primary-500 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                        <div>
+                            <h3 class="font-semibold">Hướng dẫn cài đặt DBI Gateway</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Tài liệu hướng dẫn chi tiết từng bước cài đặt và cấu hình.</p>
+                        </div>
+                    </div>
+                    <a href="#" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">Xem tài liệu</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Về tác giả -->
+        <section id="about-me" class="section">
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <div class="md:col-span-1 flex justify-center">
+                    <img src="https://placehold.co/400x400/3b82f6/ffffff?text=BVD" alt="Ảnh đại diện Bùi Văn Đức" class="rounded-full w-64 h-64 md:w-80 md:h-80 object-cover shadow-lg border-4 border-white dark:border-gray-700">
+                </div>
+                <div class="md:col-span-2">
+                    <h2 class="text-3xl font-bold mb-2">Về tác giả</h2>
+                    <h3 class="text-2xl font-semibold mb-2">Bùi Văn Đức</h3>
+                    <h4 class="text-lg font-medium text-primary-600 dark:text-primary-400 mb-4">Kỹ Sư Tự Động Hóa & Người sáng lập DBI Project</h4>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">
+                        Với gần 4 năm kinh nghiệm và hơn 40 dự án lớn nhỏ trong lĩnh vực tự động hóa và phát triển phần mềm, tôi nhận thấy nhu cầu kết nối dữ liệu trong công nghiệp là rất lớn nhưng các giải pháp hiện tại thường có chi phí cao. Dự án DBI ra đời từ chính đam mê và mong muốn đóng góp một công cụ hữu ích, miễn phí cho cộng đồng kỹ sư Việt Nam và thế giới.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="skill-tag">PLC Siemens/Mitsu</span>
+                        <span class="skill-tag">C# / WPF</span>
+                        <span class="skill-tag">Node.js / React</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">IoT</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Liên hệ -->
+        <section id="contact" class="section">
+            <h2 class="text-3xl font-bold text-center mb-10">Đóng góp & Liên hệ</h2>
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+                <!-- Form đóng góp -->
+                <div class="flex flex-col">
+                    <h3 class="text-2xl font-semibold mb-4">Gửi ý kiến đóng góp</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">
+                        Mọi sự đóng góp về ý tưởng, mã nguồn, hay báo lỗi đều vô cùng quý giá. Hãy điền vào form bên dưới để gửi tin nhắn trực tiếp cho tôi.
+                    </p>
+                    <form action="#" method="POST" onsubmit="alert('Cảm ơn bạn đã đóng góp! Chức năng này đang được phát triển.'); return false;">
+                        <div class="mb-4">
+                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Họ và tên</label>
+                            <input type="text" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Tên của bạn" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Email</label>
+                            <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="email@example.com" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="subject" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Chủ đề</label>
+                            <input type="text" id="subject" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="V/v đóng góp tính năng..." required>
+                        </div>
+                        <div class="mb-6">
+                             <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Nội dung</label>
+                             <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Nội dung tin nhắn của bạn..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-3 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Gửi tin nhắn</button>
+                    </form>
+                </div>
+
+                <!-- Thông tin liên hệ -->
+                <div class="flex flex-col justify-start pt-10">
+                    <h3 class="text-2xl font-semibold mb-4">Thông tin trực tiếp</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">
+                        Bạn cũng có thể liên hệ trực tiếp với tôi qua các kênh dưới đây. Tôi luôn sẵn sàng lắng nghe và trao đổi.
+                    </p>
+                    <div class="space-y-5">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 text-primary-500 mr-4 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
+                            <span class="text-gray-800 dark:text-gray-200">0963322515</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 text-primary-500 mr-4 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+                            <a href="mailto:buiminhduc23011@gmail.com" class="text-gray-800 dark:text-gray-200 hover:text-primary-500 dark:hover:text-primary-400">buiminhduc23011@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                        <h4 class="font-semibold mb-4 text-gray-800 dark:text-gray-200">Mạng xã hội</h4>
+                        <div class="flex space-x-6">
+                            <a href="#" class="text-gray-500 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400 transition-colors">
+                                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12.014c0 4.43 2.864 8.18 6.835 9.508.5.092.682-.217.682-.482 0-.237-.008-.868-.013-1.703-2.782.604-3.37-1.34-3.37-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.068-.608.068-.608 1.003.07 1.53 1.03 1.53 1.03.893 1.53 2.34 1.088 2.91.832.092-.646.35-1.088.636-1.338-2.22-.252-4.555-1.112-4.555-4.944 0-1.09.39-1.984 1.03-2.682-.103-.254-.447-1.27.098-2.648 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.82c.85.004 1.705.114 2.504.336 1.91-1.296 2.747-1.026 2.747-1.026.547 1.378.203 2.394.1 2.648.64.7 1.026 1.59 1.026 2.682 0 3.84-2.338 4.688-4.566 4.934.36.308.678.92.678 1.852 0 1.336-.012 2.41-.012 2.736 0 .268.18.578.688.48A10.001 10.001 0 0022 12.014C22 6.477 17.523 2 12 2z" clip-rule="evenodd" /></svg>
+                                <span class="sr-only">GitHub</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div class="container mx-auto px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+            <p>&copy; 2024 DBI - Data Bridge Industrial Project. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <style>
+        /* Tùy chỉnh thêm cho các thẻ tag */
+        .skill-tag {
+            @apply bg-primary-100 text-primary-800 text-sm font-medium mr-2 px-2.5 py-1 rounded-full dark:bg-primary-900 dark:text-primary-300;
+        }
+        .tech-tag {
+            @apply bg-gray-200 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('header .hidden a');
+            const mobileNavLinks = document.querySelectorAll('#mobile-menu a');
+            const sections = document.querySelectorAll('.section');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            // Hàm chuyển trang
+            function showSection(hash) {
+                if (!hash || !document.querySelector(hash)) {
+                    hash = '#home';
+                }
+
+                sections.forEach(section => section.classList.remove('active'));
+                const activeSection = document.querySelector(hash);
+                if(activeSection) activeSection.classList.add('active');
+
+                const allLinks = [...navLinks, ...mobileNavLinks];
+                allLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === hash);
+                });
+                
+                mobileMenu.classList.add('hidden');
+            }
+
+            const allNavLinks = [...navLinks, ...mobileNavLinks];
+            allNavLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    history.pushState(null, null, targetId);
+                    showSection(targetId);
+                });
+            });
+
+            window.addEventListener('popstate', () => showSection(window.location.hash));
+            showSection(window.location.hash || '#home');
+
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+            // Xử lý chuyển đổi theme (sáng/tối)
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+            const isDarkMode = localStorage.getItem('color-theme') === 'dark' || 
+                               (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+            if (isDarkMode) {
+                themeToggleLightIcon.classList.remove('hidden');
+                document.documentElement.classList.add('dark');
+            } else {
+                themeToggleDarkIcon.classList.remove('hidden');
+                document.documentElement.classList.remove('dark');
+            }
+
+            themeToggleBtn.addEventListener('click', function() {
+                themeToggleDarkIcon.classList.toggle('hidden');
+                themeToggleLightIcon.classList.toggle('hidden');
+                
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+            });
+        });
+    </script>
+</body>
+</html>
